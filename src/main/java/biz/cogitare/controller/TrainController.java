@@ -1,32 +1,42 @@
 package biz.cogitare.controller;
 
+import biz.cogitare.dto.TrainDto;
 import biz.cogitare.model.TrainModel;
 import biz.cogitare.repository.TrainRepository;
+import biz.cogitare.service.TrainService;
 import biz.cogitare.service.TrainServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/")
-public class TrainController {
+public final class TrainController {
 
-    TrainServiceImpl trainService;
+    TrainService trainService;
 
-    public TrainController(TrainServiceImpl trainService) {
+    @Autowired
+    public TrainController(TrainService trainService) {
         this.trainService = trainService;
     }
 
     private final Logger LOG = LoggerFactory.getLogger(getClass());
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    @ResponseBody
-    public TrainModel getTrain(@PathVariable String id) {
+    public @ResponseBody TrainDto getTrain(@PathVariable String id) {
         LOG.info("Getting train with ID: {}.", id);
-        TrainModel train = trainService.getTrainById(id);
+        TrainDto train = trainService.getTrainById(id);
         LOG.info(train.toString());
 
         return train;
     }
+
+    @RequestMapping(value = "/create", method = RequestMethod.POST)
+    public void create(@RequestBody TrainDto train){
+        trainService.createTrain(train);
+    }
+
 
 }
